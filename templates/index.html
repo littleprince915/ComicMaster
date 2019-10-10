@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.muicss.com/mui-latest/css/mui.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ url_for('static', filename='static/style.css') }}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://cdn.muicss.com/mui-latest/js/mui.min.js"></script>
+    <script src="{{ url_for('static', filename='static/script.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style type="text/css">
+			#dropZone {
+				border: 3px dashed #0088cc;
+				width: auto;
+				height: 600px;
+			}
+			
+			.img-overlay-wrap {
+			  position: relative;
+			  display: inline-block;
+			  transition: transform 150ms ease-in-out;
+			}
+
+			.img-overlay-wrap svg {
+			  position: absolute;
+			  top: 0;
+			  left: 0;
+			}
+			
+			polygon{
+				fill: lime;
+				fill-opacity: 0.4;
+			}
+			
+			polygon:hover{
+				fill: lime;
+				fill-opacity: 0.2;
+			}
+		</style>
+  </head>
+  <body>
+    <div id="sidedrawer" class="mui--no-user-select">
+      <div id="sidedrawer-brand" class="mui--appbar-line-height">
+        <span class="mui--text-title">ComicMaster</span>
+      </div>
+      <div class="mui-divider"></div>
+      <ul>
+        <li><a href="{{ url_for('gallery') }}"><strong>Gallery</strong></a></li>
+        <li><a href="{{ url_for('index') }}"><strong>Translate</strong></a></li>
+        <li><a href="{{ url_for('training') }}"><strong>Training</strong></a></li>
+      </ul>
+    </div>
+    <header id="header">
+      <div class="mui-appbar mui--appbar-line-height">
+        <div class="mui-container-fluid">
+          <a class="sidedrawer-toggle mui--visible-xs-inline-block mui--visible-sm-inline-block js-show-sidedrawer">☰</a>
+          <a class="sidedrawer-toggle mui--hidden-xs mui--hidden-sm js-hide-sidedrawer">☰</a>
+          <span class="mui--text-title mui--visible-xs-inline-block mui--visible-sm-inline-block">Brand.io</span>
+          <a href="{{ url_for('logout') }}"><button class="mui-btn" style="float:right;margin-top:12px;margin-left:15px" >Logout</button></a>
+        </div>
+      </div>
+    </header>
+    <div id="content-wrapper" style="padding-bottom:0px">
+      <div class="mui--appbar-height"></div>
+      <div class="mui-container-fluid">
+        <br>
+        <div class="mui-row">
+          
+          <div class="mui-col-md-4">
+            <div class="mui-panel">
+              <div id="dropZone" class="img-overlay-wrap">
+                {% if withimage %}
+                <img src="/static/manga.jpg">
+				<svg width="403" height="600" >
+				  {% for box in boxes %}
+					<polygon points="{{box.minx}},{{box.miny}} {{box.maxx}},{{box.miny}} {{box.maxx}},{{box.maxy}} {{box.minx}},{{box.maxy}}" title="{{ box.jtext }}" />
+                  {% endfor %}
+				</svg>
+                {% else %}
+                <h1>Drag & Drop Files...</h1>
+					<form method="post" action="/upload" enctype="multipart/form-data">
+						<input type="file" name="file" autocomplete="off" required>
+						<input type="submit" value="Submit">
+					</form>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          {% if withimage %}
+          {% for box in boxes %}
+          <div class="mui-col-md-8" style="padding:0px">
+            <div class="mui-col-md-4">
+              <div class="mui-panel">
+                {{ box.jtext }}
+              </div>
+            </div>
+            <div class="mui-col-md-4">
+              <div class="mui-panel">
+                {{ box.romaji }}
+              </div>
+            </div>
+            <div class="mui-col-md-4">
+              <div class="mui-panel">
+                {{ box.etext }}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          {% endif %}
+          
+        </div>
+      </div>
+      
+      
+    </div>
+		<script src="{{ url_for('static', filename='js/vendor/jquery.ui.widget.js') }}" type="text/javascript"></script>
+		<script src="{{ url_for('static', filename='js/jquery.iframe-transport.js') }}" type="text/javascript"></script>
+		<script src="{{ url_for('static', filename='js/jquery.fileupload.js') }}" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(function () {
+               var files = $("#files");
+
+               $("#fileupload").fileupload({
+                   url: '/upload',
+                   dropZone: '#dropZone',
+                   autoUpload: false,
+                   success: function(e, data){
+                      console.log(data)
+                      console.log(e)
+                      $(location).attr('href', '/index/' + e.imageid)
+                   }
+               }).on('fileuploadadd', function (e, data) {
+                   var fileTypeAllowed = /.\.(gif|jpg|png|jpeg)$/i;
+                   var fileName = data.originalFiles[0]['name'];
+                   var fileSize = data.originalFiles[0]['size'];
+
+                   if (!fileTypeAllowed.test(fileName))
+                        $("#error").html('Only images are allowed!');
+                   else if (fileSize > 500000)
+                       $("#error").html('Your file is too big! Max allowed size is: 500KB');
+                   else {
+                       $("#error").html("");
+                       data.submit();
+                   }
+               }).on('fileuploaddone', function(e, data) {
+                    var status = data.jqXHR.responseJSON.status;
+                    var msg = data.jqXHR.responseJSON.msg;
+                    
+                    //if (status == 1) {
+                    //    var path = data.jqXHR.responseJSON.path;
+                    //    $("#files").fadeIn().append('<p><img style="width: 100px; height: 100px;" src="'+path+'" /></p>');
+                    //} else
+                    //    $("#error").html(msg);
+               }).on('fileuploadprogressall', function(e,data) {
+                    //var progress = parseInt(data.loaded / data.total * 100, 10);
+                    //$("#progress").html("Completed: " + progress + "%");
+               });
+
+                $( document ).tooltip({position: { my: "bottom", at: "bottom" }});
+            });
+        </script>
+  </body>
+</html>
