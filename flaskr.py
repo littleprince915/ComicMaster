@@ -3,23 +3,13 @@
 
 import os
 
-from flask import Flask, redirect, render_template, request, make_response, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from flask import redirect, render_template, request, make_response, jsonify
 
 import ocr
+from . import app
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-    
-project_dir = os.path.dirname(os.path.abspath(__file__))
-database_file = "sqlite:///{}".format(os.path.join(project_dir, "bookdatabase.db"))
-upload_dir = os.path.join(project_dir, "./static/")
 
-
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = database_file
-app.config['UPLOAD_FOLDER'] = upload_dir
-
-db = SQLAlchemy(app)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

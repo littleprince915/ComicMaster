@@ -12,11 +12,8 @@ import textdetect.connected_components as cc
 import textdetect.clean_page as clean
 import textdetect.segmentation as seg
 
-
+from . import app
 from googletrans import Translator
-
-project_dir = os.path.dirname(os.path.abspath(__file__))
-upload_dir = os.path.join(project_dir, "./static/")
 
 picklefile = open("dataset.pickle", "rb")
 dataset = pickle.load(picklefile)
@@ -272,7 +269,7 @@ def ocr_boxes(image):
     return txt
 
 def detect_boxes():
-    infile = os.path.join(upload_dir, "original_manga.jpg")
+    infile = os.path.join(app.config['UPLOAD_FOLDER'], "original_manga.jpg")
     img = cv2.imread(infile)
     img = image_resize(img, width=1075)
     gray = clean.grayscale(img)
@@ -295,7 +292,7 @@ def detect_boxes():
 
     resized_img = cv2.resize(img, (neww, newh))
 
-    cv2.imwrite(os.path.join(upload_dir, "manga.jpg"), resized_img)
+    cv2.imwrite(os.path.join(app.config['UPLOAD_FOLDER'], "manga.jpg"), resized_img)
 
     blurbs = []
     id = 0
@@ -308,7 +305,7 @@ def detect_boxes():
         maxy = int(component[0].stop * resize)
 
         roi = img[component[0].start:component[0].stop, component[1].start:component[1].stop]
-        cv2.imwrite(os.path.join(upload_dir, "textarea{}.jpg".format(id)), roi)
+        cv2.imwrite(os.path.join(app.config['UPLOAD_FOLDER'], "textarea{}.jpg".format(id)), roi)
 
         jtext = ocr_boxes(roi)
 
