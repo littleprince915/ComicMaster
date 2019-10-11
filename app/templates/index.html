@@ -49,9 +49,8 @@
       </div>
       <div class="mui-divider"></div>
       <ul>
-        <li><a href="{{ url_for('gallery') }}"><strong>Gallery</strong></a></li>
-        <li><a href="{{ url_for('index') }}"><strong>Translate</strong></a></li>
-        <li><a href="{{ url_for('training') }}"><strong>Training</strong></a></li>
+        <li><a href="/gallery"><strong>Gallery</strong></a></li>
+        <li><a href="/image"><strong>Translate</strong></a></li>
       </ul>
     </div>
     <header id="header">
@@ -60,7 +59,7 @@
           <a class="sidedrawer-toggle mui--visible-xs-inline-block mui--visible-sm-inline-block js-show-sidedrawer">☰</a>
           <a class="sidedrawer-toggle mui--hidden-xs mui--hidden-sm js-hide-sidedrawer">☰</a>
           <span class="mui--text-title mui--visible-xs-inline-block mui--visible-sm-inline-block">Brand.io</span>
-          <a href="{{ url_for('logout') }}"><button class="mui-btn" style="float:right;margin-top:12px;margin-left:15px" >Logout</button></a>
+          <a href="/user/logout"><button class="mui-btn" style="float:right;margin-top:12px;margin-left:15px" >Logout</button></a>
         </div>
       </div>
     </header>
@@ -74,7 +73,7 @@
             <div class="mui-panel">
               <div id="dropZone" class="img-overlay-wrap">
                 {% if withimage %}
-                <img src="/static/manga.jpg">
+                <img src="/imagefile/{{ imageid }}">
 				<svg width="403" height="600" >
 				  {% for box in boxes %}
 					<polygon points="{{box.minx}},{{box.miny}} {{box.maxx}},{{box.miny}} {{box.maxx}},{{box.maxy}} {{box.minx}},{{box.maxy}}" title="{{ box.jtext }}" />
@@ -82,7 +81,7 @@
 				</svg>
                 {% else %}
                 <h1>Drag & Drop Files...</h1>
-					<form method="post" action="/upload" enctype="multipart/form-data">
+					<form method="POST" action="/image" enctype="multipart/form-data">
 						<input type="file" name="file" autocomplete="off" required>
 						<input type="submit" value="Submit">
 					</form>

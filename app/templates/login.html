@@ -51,15 +51,16 @@
               <table cellpadding="0" cellspacing="0" border="0" width="100%">
                 <tr>
                   <td class="mui-panel">
-                    <form class="mui-form" method="GET" action="/login">
+                    <form class="mui-form" method="POST" action="/user/login">
                       <div class="mui-textfield">
-                        <input type="text" placeholder="Username">
+                        <input type="text" placeholder="Username" name="username">
                       </div>
                       <div class="mui-textfield">
-                        <input type="password" placeholder="Password">
+                        <input type="password" placeholder="Password" name="password">
                       </div>
                       <button type="submit" class="mui-btn mui-btn--raised">Login</button>
                     </form>
+                    <a href="/user/register"><button class="mui-btn mui-btn--raised">Register</button></a>
                   </td>
                   
                 </tr>

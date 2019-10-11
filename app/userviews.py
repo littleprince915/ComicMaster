@@ -1,46 +1,49 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+from app import app
 from flask import redirect, render_template, request, Blueprint, session, url_for
 from flask_login import login_user, login_required, logout_user, current_user
 from datetime import timedelta
-from database.user import User, createuser
-from . import login_manager
+from app.database.user import createuser, getuser, getuserbyid
+from app import login_manager
 
 users = Blueprint('users', __name__)
 
+def getusersblueprint():
+    return users
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return getuserbyid(user_id)
 
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    redirect("/user/login")
+    return redirect("/user/login")
 
 
-@users.route('/home', methods=["GET"])
+@app.route('/home', methods=["GET"])
+@app.route('/', methods=["GET"])
 @login_required
 def home():
-    render_template("home.html")
+    return render_template("index.html", withimage=False)
 
 
-@users.route('/user/login', methods=["GET"])
+@app.route('/user/login', methods=["GET"])
 def userloginget():
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         return redirect('/home')
 
     return render_template('login.html')
 
 
-@users.route('/user/login', methods=["POST"])
+@app.route('/user/login', methods=["POST"])
 def userloginpost():
-    uname = request.form['nm']
-    password = request.form['pw']
+    uname = request.form['username']
+    password = request.form['password']
 
     try:
-        user = User.query.filter_by(username=uname).first()
+        user = getuser(uname, password)
         password = password.strip()
         password2 = user.password.strip()
 
@@ -52,28 +55,28 @@ def userloginpost():
         return render_template("login.html")
 
 
-@users.route('/user/register', methods=["GET"])
+@app.route('/user/register', methods=["GET"])
 def userregisterget():
     return render_template('register.html')
 
 
-@users.route('/user/register', methods=["POST"])
+@app.route('/user/register', methods=["POST"])
 def userregisterpost():
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         logout_user()
 
-    username = request.form['nm']
-    password = request.form['pw']
-    email = request.form['eadd']
+    username = request.form['username']
+    password = request.form['password']
+    email = request.form['emailadd']
 
     new_user = createuser(username, password, email)
     login_user(new_user, remember=True, duration=timedelta(days=5))
     return redirect("/home")
 
 
-@users.route('/user/logout', methods=["POST"])
+@app.route('/user/logout', methods=["GET"])
 def userlogout():
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         logout_user()
 
     return render_template('login.html')

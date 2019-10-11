@@ -25,9 +25,8 @@
       </div>
       <div class="mui-divider"></div>
       <ul>
-        <li><a href="{{ url_for('gallery') }}"><strong>Gallery</strong></a></li>
-        <li><a href="{{ url_for('index') }}"><strong>Translate</strong></a></li>
-        <li><a href="{{ url_for('training') }}"><strong>Training</strong></a></li>
+        <li><a href="/gallery"><strong>Gallery</strong></a></li>
+        <li><a href="/image"><strong>Translate</strong></a></li>
       </ul>
     </div>
     <header id="header">
@@ -36,7 +35,7 @@
           <a class="sidedrawer-toggle mui--visible-xs-inline-block mui--visible-sm-inline-block js-show-sidedrawer">☰</a>
           <a class="sidedrawer-toggle mui--hidden-xs mui--hidden-sm js-hide-sidedrawer">☰</a>
           <span class="mui--text-title mui--visible-xs-inline-block mui--visible-sm-inline-block">Brand.io</span>
-          <a href="{{ url_for('logout') }}"><button class="mui-btn" style="float:right;margin-top:12px;margin-left:15px" >Logout</button></a>
+          <a href="/user/logout"><button class="mui-btn" style="float:right;margin-top:12px;margin-left:15px" >Logout</button></a>
         </div>
       </div>
     </header>
@@ -44,10 +43,10 @@
       <div class="mui--appbar-height"></div>
       <div class="mui-container-fluid">
           <br>
-          {% for image in images %}
+          {% for imageid in imageids %}
           <div class="mui-col-md-2">
             <div class="mui-panel" style="height:200px">
-              <img src="/image/{{ image.id }}" style="max-height:100%;max-width:100%">
+              <img src="/imagefile/{{ imageid }}" style="max-height:100%;max-width:100%">
             </div>
           </div>
           {% endfor %}
