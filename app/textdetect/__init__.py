@@ -8,6 +8,7 @@ import segmentation as seg
 import connected_components as cc
 
 from app.ocr.ocr import ocr_boxes
+from app.ann import predict_ann
 
 from googletrans import Translator
 translator = Translator()
@@ -72,8 +73,9 @@ def get_text_areas(imagebytes):
         maxy = int(component[0].stop * resize)
 
         roi = img[component[0].start:component[0].stop, component[1].start:component[1].stop]
+        isjapanese = predict_ann(roi)
 
-        #TODO: call ANN function that evaluates if text area is japanese or not
+        if not isjapanese: continue
 
         roidata = cv2.imencode('.jpg', roi)[1].tostring()
         jtext = ocr_boxes(roi)
