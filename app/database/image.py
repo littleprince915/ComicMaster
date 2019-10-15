@@ -49,3 +49,9 @@ def getimagefile(imageid):
     image = Image.query.get(int(imageid))
 
     return image.data
+
+
+def gettextarea(textareaid):
+    textareadata = TextArea.query.get(int(textareaid))
+
+    return textareadata.roidata

@@ -3,7 +3,7 @@
 
 from flask import redirect, render_template, request, Blueprint, session, url_for, make_response, send_file
 from flask_login import login_user, login_required, logout_user, current_user
-from app.database.image import Image, createimage, getuserimageids, getimage, getimagefile
+from app.database.image import Image, createimage, getuserimageids, getimage, getimagefile, gettextarea
 from app import app
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
@@ -61,5 +61,17 @@ def imagefile(imageid):
     response = make_response(db_image) #this function accepts binary image
     response.headers.set('Content-Type', 'image/jpeg')
     response.headers.set('Content-Disposition', 'attachment', filename='%s.jpg' % imageid)
+
+    return response
+
+
+@app.route("/textarea/<int:textareaid>", methods=["GET"])
+@login_required
+def textareafile(textareaid):
+    db_textarea = gettextarea(textareaid)
+
+    response = make_response(db_textarea) #this function accepts binary image
+    response.headers.set('Content-Type', 'image/jpeg')
+    response.headers.set('Content-Disposition', 'attachment', filename='%s.jpg' % textareaid)
 
     return response
