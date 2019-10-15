@@ -40,6 +40,17 @@
 				fill: lime;
 				fill-opacity: 0.2;
 			}
+
+            .bubble {
+                line-height: 1.3;
+                position: absolute;
+                font-weight: 700;
+                font-size:9px;
+                background-color:whitesmoke;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+            }
 		</style>
   </head>
   <body>
@@ -74,11 +85,18 @@
               <div id="dropZone" class="img-overlay-wrap">
                 {% if withimage %}
                 <img src="/imagefile/{{ imageid }}">
-				<svg width="403" height="600" >
-				  {% for box in boxes %}
-					<polygon points="{{box.minx}},{{box.miny}} {{box.maxx}},{{box.miny}} {{box.maxx}},{{box.maxy}} {{box.minx}},{{box.maxy}}" title="{{ box.jtext }}" />
+{#				<svg width="403" height="600" >#}
+{#				  {% for box in boxes %}#}
+{#					<polygon points="{{box.minx}},{{box.miny}} {{box.maxx}},{{box.miny}} {{box.maxx}},{{box.maxy}} {{box.minx}},{{box.maxy}}" title="{{ box.jtext }}" />#}
+{#                  {% endfor %}#}
+{#				</svg>#}
+                  {% for box in boxes %}
+                    <div class="bubble" style="left:{{box.minx}}px;top:{{box.miny}}px;width:{{box.maxx - box.minx}}px;height:{{box.maxy - box.miny}}px;">
+                      <div>
+                        {{ box.etext }}
+                      </div>
+                    </div>
                   {% endfor %}
-				</svg>
                 {% else %}
                 <h1>Drag & Drop Files...</h1>
 					<form method="POST" action="/image" enctype="multipart/form-data">
