@@ -24,3 +24,4 @@ db = SQLAlchemy(app)
 
 from app import userviews
 from app import imageviews
+from app import imagestepviews

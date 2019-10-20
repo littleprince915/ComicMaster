@@ -46,10 +46,11 @@
                 position: absolute;
                 font-weight: 700;
                 font-size:9px;
-                background-color:whitesmoke;
+                background-color:blue;
                 display:flex;
                 justify-content:center;
                 align-items:center;
+                opacity: 0.6;
             }
 		</style>
   </head>
@@ -84,48 +85,28 @@
           <div class="mui-col-md-4">
             <div class="mui-panel">
               <div id="dropZone" class="img-overlay-wrap">
-                {% if withimage %}
                 <img src="/imagefile/{{ imageid }}">
                   {% for box in boxes %}
                     <div class="bubble" data-id="{{box.id}}" style="left:{{box.minx}}px;top:{{box.miny}}px;width:{{box.maxx - box.minx}}px;height:{{box.maxy - box.miny}}px;">
-                      <div>
-                        {{ box.etext }}
-                      </div>
                     </div>
                   {% endfor %}
-                {% else %}
-                <h1>Drag & Drop Files...</h1>
-					<form method="POST" action="/image" enctype="multipart/form-data">
-						<input type="file" name="file" autocomplete="off" required>
-						<input type="submit" value="Submit">
-					</form>
-                {% endif %}
               </div>
             </div>
           </div>
-          
-          {% if withimage %}
-          {% for box in boxes %}
-          <div class="mui-col-md-8 texts" style="padding:0px" data-id="{{box.id}}" title="<img src='/textarea/{{box.id}}' />">
+{#          TODO: show all textareas here instead of texts#}
+          <div class="mui-col-md-8 texts" style="padding:0px;height:600px;overflow-y: scroll;" />
+            {% for box in boxes %}
             <div class="mui-col-md-4">
-              <div class="mui-panel">
-                {{ box.jtext }}
+              <div class="mui-panel textarea" data-id="{{ box.id }}">
+                <img src="/textarea/{{ box.id }}">
               </div>
             </div>
-            <div class="mui-col-md-4">
-              <div class="mui-panel">
-                {{ box.romaji }}
-              </div>
-            </div>
-            <div class="mui-col-md-4">
-              <div class="mui-panel">
-                {{ box.etext }}
-              </div>
-            </div>
+            {% endfor %}
           </div>
-          {% endfor %}
-          {% endif %}
-          
+
+          <form method="POST" action="/imagestep/{{ imageid }}/step2" enctype="multipart/form-data">
+            <input type="submit" value="Go to Step 2">
+          </form>
         </div>
       </div>
       
@@ -133,28 +114,32 @@
     </div>
         <script type="text/javascript">
             $(function () {
-                $( document ).tooltip({position: { my: "left", at: "left" }});
 
                 $("div.bubble").hover(function(){
                     let id = $(this).data("id");
 
-                    $("div.texts[data-id='" + id + "']").css("background-color", "lightblue");
+                    $("div.textarea[data-id='" + id + "']").css("background-color", "lightblue");
+                    $(this).css("background-color", "lightblue");
                 }, function(){
                     let id = $(this).data("id");
 
-                    $("div.texts[data-id='" + id + "']").css("background-color", "transparent");
+                    $("div.textarea[data-id='" + id + "']").css("background-color", "white");
+                    $(this).css("background-color", "blue");
                 });
 
-                $("div.texts").hover(function(){
+                $("div.textarea").hover(function(){
                     let id = $(this).data("id");
 
                     $("div.bubble[data-id='" + id + "']").css("background-color", "lightblue");
-                    $("div.texts[data-id='" + id + "']").tooltip({content: "<img src='/textarea/" + id + "' />"})
+                    $(this).css("background-color", "lightblue");
+
                 }, function(){
                     let id = $(this).data("id");
 
-                    $("div.bubble[data-id='" + id + "']").css("background-color", "whitesmoke");
+                    $("div.bubble[data-id='" + id + "']").css("background-color", "blue");
+                    $(this).css("background-color", "white");
                 });
+
             });
         </script>
   </body>

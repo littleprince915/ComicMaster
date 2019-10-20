@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import redirect, render_template, request, Blueprint, session, url_for, make_response, send_file
-from flask_login import login_user, login_required, logout_user, current_user
-from app.database.image import Image, createimage, getuserimageids, getimage, getimagefile, gettextarea
+from flask import redirect, render_template, request, make_response
+from flask_login import login_required, current_user
+from app.database.image import createimage, getuserimageids, getimage, getimagefile, gettextarea
 from app import app
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])

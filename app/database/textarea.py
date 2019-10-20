@@ -9,5 +9,6 @@ class TextArea (db.Model):
     jtext = db.Column(db.String(50), nullable=True)
     romaji = db.Column(db.String(50), nullable=True)
     etext = db.Column(db.String(50), nullable=True)
+    isjapanese = db.Column(db.Boolean, default=False)
     roidata = db.Column(db.LargeBinary)
     image_id = db.Column(db.Integer, db.ForeignKey('image.id'))

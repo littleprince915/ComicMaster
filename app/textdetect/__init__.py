@@ -89,3 +89,55 @@ def get_text_areas(imagebytes):
                        'romaji': romaji.pronunciation, 'etext': translation.text, "roidata":roidata})
 
     return resized_img, blurbs
+
+
+def get_text_areas_only(imagebytes):
+    # img_np = cv2.imdecode(imagebytes, cv2.IMREAD_COLOR)
+    img_np = cv2.imdecode(np.frombuffer(imagebytes, np.uint8), -1)
+    img = image_resize(img_np, 1075)
+
+    gray = clean.grayscale(img)
+
+    segmented_image = seg.segment_image(gray)
+    segmented_image = segmented_image[:, :, 2]
+
+    components = cc.get_connected_components(segmented_image)
+
+    (h, w) = img.shape[:2]
+    neww = 400
+    resize = float(neww) / float(w)
+    newh = int(resize * h)
+
+    resized_img = cv2.resize(img, (neww, newh))
+
+    blurbs = []
+    for component in components:
+        minx = int(component[1].start * resize)
+        miny = int(component[0].start * resize)
+        maxx = int(component[1].stop * resize)
+        maxy = int(component[0].stop * resize)
+
+        roi = img[component[0].start:component[0].stop, component[1].start:component[1].stop]
+
+        roidata = cv2.imencode('.jpg', roi)[1].tostring()
+
+        blurbs.append({"minx": minx, "miny": miny, "maxx": maxx, "maxy": maxy, 'jtext': u"",
+                       'romaji': u"", 'etext': u"", "roidata":roidata})
+
+    return resized_img, blurbs
+
+
+def ann_classify(roibytes):
+    roi = cv2.imdecode(np.frombuffer(roibytes, np.uint8), -1)
+    isjapanese = predict_ann(roi)
+
+
+    return isjapanese
+
+def get_characters(roibytes):
+    roi = cv2.imdecode(np.frombuffer(roibytes, np.uint8), -1)
+    jtext = ocr_boxes(roi)
+    romaji = translator.translate(jtext, dest='ja')
+    romaji = romaji.pronunciation
+
+    return jtext, romaji
