@@ -1,11 +1,11 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.muicss.com/mui-latest/css/mui.min.css" rel="stylesheet" type="text/css" />
-    <link href="{{ url_for('static', filename='static/style.css') }}" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.muicss.com/mui-latest/css/mui.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{{ url_for('static', filename='static/style.css') }}" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://cdn.muicss.com/mui-latest/js/mui.min.js"></script>
@@ -13,94 +13,75 @@
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <style type="text/css">
-			#dropZone {
-				border: 3px dashed #0088cc;
-				width: auto;
-				height: 600px;
-			}
-			
-			.img-overlay-wrap {
-			  position: relative;
-			  display: inline-block;
-			  transition: transform 150ms ease-in-out;
-			}
+        #dropZone {
+            border: 3px dashed #0088cc;
+            width: auto;
+            height: 600px;
+        }
 
-			.img-overlay-wrap svg {
-			  position: absolute;
-			  top: 0;
-			  left: 0;
-			}
-			
-			polygon{
-				fill: lime;
-				fill-opacity: 0.4;
-			}
-			
-			polygon:hover{
-				fill: lime;
-				fill-opacity: 0.2;
-			}
+        .img-overlay-wrap {
+            position: relative;
+            display: inline-block;
+            transition: transform 150ms ease-in-out;
+        }
 
-            .bubble {
-                line-height: 1.3;
-                position: absolute;
-                font-weight: 700;
-                font-size:9px;
-                background-color:whitesmoke;
-                display:flex;
-                justify-content:center;
-                align-items:center;
-            }
-		</style>
-  </head>
-  <body>
-    <div id="sidedrawer" class="mui--no-user-select">
-      <div id="sidedrawer-brand" class="mui--appbar-line-height">
+        .img-overlay-wrap svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+<div id="sidedrawer" class="mui--no-user-select">
+    <div id="sidedrawer-brand" class="mui--appbar-line-height">
         <span class="mui--text-title">ComicMaster</span>
-      </div>
-      <div class="mui-divider"></div>
-      <ul>
+    </div>
+    <div class="mui-divider"></div>
+    <ul>
         <li><a href="/gallery"><strong>Gallery</strong></a></li>
         <li><a href="/image"><strong>Translate</strong></a></li>
         <li><a href="/imagestep"><strong>Step by Step</strong></a></li>
-      </ul>
-    </div>
-    <header id="header">
-      <div class="mui-appbar mui--appbar-line-height">
+    </ul>
+</div>
+<header id="header">
+    <div class="mui-appbar mui--appbar-line-height">
         <div class="mui-container-fluid">
-          <a class="sidedrawer-toggle mui--visible-xs-inline-block mui--visible-sm-inline-block js-show-sidedrawer">☰</a>
-          <a class="sidedrawer-toggle mui--hidden-xs mui--hidden-sm js-hide-sidedrawer">☰</a>
-          <span class="mui--text-title mui--visible-xs-inline-block mui--visible-sm-inline-block">Brand.io</span>
-          <a href="/user/logout"><button class="mui-btn" style="float:right;margin-top:12px;margin-left:15px" >Logout</button></a>
+            <a class="sidedrawer-toggle mui--visible-xs-inline-block mui--visible-sm-inline-block js-show-sidedrawer">☰</a>
+            <a class="sidedrawer-toggle mui--hidden-xs mui--hidden-sm js-hide-sidedrawer">☰</a>
+            <span class="mui--text-title mui--visible-xs-inline-block mui--visible-sm-inline-block">Brand.io</span>
+            <a href="/user/logout">
+                <button class="mui-btn" style="float:right;margin-top:12px;margin-left:15px">Logout</button>
+            </a>
         </div>
-      </div>
-    </header>
-    <div id="content-wrapper" style="padding-bottom:0px">
-      <div class="mui--appbar-height"></div>
-      <div class="mui-container-fluid">
+    </div>
+</header>
+<div id="content-wrapper" style="padding-bottom:0px">
+    <div class="mui--appbar-height"></div>
+    <div class="mui-container-fluid">
         <br>
         <div class="mui-row">
-          
-          <div class="mui-col-md-4">
-            <div class="mui-panel">
-              <div id="dropZone" class="img-overlay-wrap">
-                <h1>Drag & Drop Files...</h1>
-					<form method="POST" action="/imagestep" enctype="multipart/form-data">
-						<input type="file" name="file" autocomplete="off" required>
-						<input type="submit" value="Submit">
-					</form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      
-    </div>
-        <script type="text/javascript">
-            $(function () {
 
-            });
-        </script>
-  </body>
+            <div class="mui-col-md-4">
+                <div class="mui-panel">
+                    <div id="dropZone" class="img-overlay-wrap">
+                        <h1>Drag & Drop Files...</h1>
+                        <form method="POST" action="/imagestep" enctype="multipart/form-data">
+                            <input type="file" name="file" autocomplete="off" required>
+                            <input type="submit" value="Submit">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script type="text/javascript">
+    $(function () {
+
+    });
+</script>
+</body>
 </html>

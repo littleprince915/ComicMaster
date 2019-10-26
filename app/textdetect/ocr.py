@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 
+
 def draw_2d_slices(img, slices, color=(0, 0, 255), line_size=1):
     for entry in slices:
         vert = entry[0]
@@ -12,8 +13,6 @@ def segment_into_lines(img, component, min_segment_threshold=1):
     (ys, xs) = component[:2]
     w = xs.stop - xs.start
     h = ys.stop - ys.start
-    x = xs.start
-    y = ys.start
     aspect = float(w) / float(h)
 
     vertical = []
@@ -27,7 +26,6 @@ def segment_into_lines(img, component, min_segment_threshold=1):
         elif start_col < 0:
             start_col = col
 
-    # detect horizontal rows of non-zero pixels
     horizontal = []
     start_row = ys.start
     for row in range(ys.start, ys.stop):

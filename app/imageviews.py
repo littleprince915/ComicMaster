@@ -58,7 +58,7 @@ def getimageboxes(imageid):
 def imagefile(imageid):
     db_image = getimagefile(imageid)
 
-    response = make_response(db_image) #this function accepts binary image
+    response = make_response(db_image)  # this function accepts binary image
     response.headers.set('Content-Type', 'image/jpeg')
     response.headers.set('Content-Disposition', 'attachment', filename='%s.jpg' % imageid)
 
@@ -70,7 +70,7 @@ def imagefile(imageid):
 def textareafile(textareaid):
     db_textarea = gettextarea(textareaid)
 
-    response = make_response(db_textarea) #this function accepts binary image
+    response = make_response(db_textarea)  # this function accepts binary image
     response.headers.set('Content-Type', 'image/jpeg')
     response.headers.set('Content-Disposition', 'attachment', filename='%s.jpg' % textareaid)
 

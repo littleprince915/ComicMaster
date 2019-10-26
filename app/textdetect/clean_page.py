@@ -3,8 +3,7 @@ import cv2
 
 def grayscale(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # adjust histogram to maximize black/white range (increase contrast, decrease brightness)??
-    # gray = cv2.equalizeHist(gray)
+
     return gray
 
 
@@ -23,11 +22,7 @@ def form_canny_mask(img, mask=None):
 
     temp_mask = np.zeros(img.shape, np.uint8)
     for c in contours:
-        # also draw detected contours into the original image in green
-        # cv2.drawContours(img,[c],0,(0,255,0),1)
         hull = cv2.convexHull(c)
         cv2.drawContours(temp_mask, [hull], 0, 255, -1)
-        # cv2.drawContours(temp_mask,[c],0,255,-1)
-        # polygon = cv2.approxPolyDP(c,0.1*cv2.arcLength(c,True),True)
-        # cv2.drawContours(temp_mask,[polygon],0,255,-1)
+
     return temp_mask

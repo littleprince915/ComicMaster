@@ -1,10 +1,10 @@
-from sqlalchemy.orm import load_only
 from app.database.user import getuserbyid
 from app.database.textarea import TextArea
 from app.textdetect import get_text_areas, get_text_areas_only, ann_classify, get_characters
 from app import db
 
 import cv2
+
 
 class Image(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -23,8 +23,10 @@ def createimage(data, userid):
     db.session.commit()
 
     for textarea in textareas:
-        newtextarea = TextArea(minx=textarea["minx"], miny=textarea["miny"], maxx=textarea["maxx"], maxy=textarea["maxy"],
-                               jtext=textarea["jtext"], romaji=textarea["romaji"], etext=textarea["etext"], image=newImage,
+        newtextarea = TextArea(minx=textarea["minx"], miny=textarea["miny"], maxx=textarea["maxx"],
+                               maxy=textarea["maxy"],
+                               jtext=textarea["jtext"], romaji=textarea["romaji"], etext=textarea["etext"],
+                               image=newImage,
                                roidata=textarea["roidata"], isjapanese=True)
         db.session.add(newtextarea)
     db.session.commit()
@@ -67,8 +69,10 @@ def createimagestep1(data, userid):
     db.session.commit()
 
     for textarea in textareas:
-        newtextarea = TextArea(minx=textarea["minx"], miny=textarea["miny"], maxx=textarea["maxx"], maxy=textarea["maxy"],
-                               jtext=textarea["jtext"], romaji=textarea["romaji"], etext=textarea["etext"], image=newImage,
+        newtextarea = TextArea(minx=textarea["minx"], miny=textarea["miny"], maxx=textarea["maxx"],
+                               maxy=textarea["maxy"],
+                               jtext=textarea["jtext"], romaji=textarea["romaji"], etext=textarea["etext"],
+                               image=newImage,
                                roidata=textarea["roidata"])
         db.session.add(newtextarea)
     db.session.commit()

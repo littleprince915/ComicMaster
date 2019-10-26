@@ -1,6 +1,7 @@
 from app import db
 
-class TextArea (db.Model):
+
+class TextArea(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     minx = db.Column(db.Integer, nullable=False)
     miny = db.Column(db.Integer, nullable=False)

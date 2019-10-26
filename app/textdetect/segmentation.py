@@ -9,10 +9,10 @@ import clean_page as clean
 import defaults
 
 
-def segment_image(img, max_scale=defaults.CC_SCALE_MAX, min_scale=defaults.CC_SCALE_MIN):
+def segment_image(img, max_scale=4.0, min_scale=0.15):
     (h, w) = img.shape[:2]
 
-    binary_threshold = defaults.BINARY_THRESHOLD
+    binary_threshold = 190
     binary = clean.binarize(img, threshold=binary_threshold)
 
     sigma = (0.8 / 676.0) * float(h) - 0.9
@@ -42,7 +42,6 @@ def segment_image(img, max_scale=defaults.CC_SCALE_MAX, min_scale=defaults.CC_SC
 
     segmented_image = np.zeros((h, w, 3), np.uint8)
     segmented_image[:, :, 0] = img
-    segmented_image[:, :, 1] = text_only
     segmented_image[:, :, 2] = text_only
     return segmented_image
 
@@ -56,14 +55,11 @@ def cleaned2segmented(cleaned, average_size):
                                    horizontal_smoothing_threshold)
     components = cc.get_connected_components(run_length_smoothed)
     text = np.zeros((h, w), np.uint8)
-    # text_columns = np.zeros((h,w),np.uint8)
-    # text_rows = np.zeros((h,w),np.uint8)
 
     for component in components:
         seg_thresh = 1
         (aspect, v_lines, h_lines) = ocr.segment_into_lines(cv2.bitwise_not(cleaned), component,
                                                             min_segment_threshold=seg_thresh)
-
 
         if len(v_lines) < 2 and len(h_lines) < 2: continue
 

@@ -1,15 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Apr  6 14:58:20 2019
-
-@author: Enyang
-"""
-
 import glob
-import numpy as np
-import cv2
 import re
+
+import cv2
+import numpy as np
 
 
 def resize_and_pad(img, num_px):
@@ -75,5 +68,3 @@ def preprocess_data(image, num_px):
     np_train_set_x = np.array(train_set_x).T
 
     return np_train_set_x
-
-#np_result_set_x, np_result_set_y = load_dataset('training','jpg',200)

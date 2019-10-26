@@ -1,15 +1,4 @@
 #!/usr/bin/python
-# vim: set ts=2 expandtab:
-"""
-Module: defaults.py
-Desc: Managa text detection default parameters
-Author: John O'Neil
-Email: oneil.john@gmail.com
-DATE: Friday,  Sept 6th 2013
-
-  Default parameter values.
-  
-"""
 
 BINARY_THRESHOLD = 190
 GAUSSIAN_FILTER_SIGMA = 1.5

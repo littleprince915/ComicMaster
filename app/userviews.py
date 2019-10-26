@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*
+
 from app import app
-from flask import redirect, render_template, request, Blueprint, session, url_for
+from flask import redirect, render_template, request, Blueprint
 from flask_login import login_user, login_required, logout_user, current_user
 from datetime import timedelta
 from app.database.user import createuser, getuser, getuserbyid
@@ -9,8 +10,6 @@ from app import login_manager
 
 users = Blueprint('users', __name__)
 
-def getusersblueprint():
-    return users
 
 @login_manager.user_loader
 def load_user(user_id):
