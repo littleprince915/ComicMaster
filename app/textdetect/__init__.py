@@ -65,6 +65,12 @@ def get_text_areas(imagebytes):
 
     resized_img = cv2.resize(img, (neww, newh))
 
+    blurbs = extract_and_translate(components, img, resize)
+
+    return resized_img, blurbs
+
+
+def extract_and_translate(components, img, resize):
     blurbs = []
     for component in components:
         minx = int(component[1].start * resize)
@@ -86,9 +92,8 @@ def get_text_areas(imagebytes):
         romaji = translator.translate(jtext, dest='ja')
 
         blurbs.append({"minx": minx, "miny": miny, "maxx": maxx, "maxy": maxy, 'jtext': jtext,
-                       'romaji': romaji.pronunciation, 'etext': translation.text, "roidata":roidata})
-
-    return resized_img, blurbs
+                       'romaji': romaji.pronunciation, 'etext': translation.text, "roidata": roidata})
+    return blurbs
 
 
 def get_text_areas_only(imagebytes):
@@ -110,6 +115,12 @@ def get_text_areas_only(imagebytes):
 
     resized_img = cv2.resize(img, (neww, newh))
 
+    blurbs = extract_text_areas(components, img, resize)
+
+    return resized_img, blurbs
+
+
+def extract_text_areas(components, img, resize):
     blurbs = []
     for component in components:
         minx = int(component[1].start * resize)
@@ -122,9 +133,8 @@ def get_text_areas_only(imagebytes):
         roidata = cv2.imencode('.jpg', roi)[1].tostring()
 
         blurbs.append({"minx": minx, "miny": miny, "maxx": maxx, "maxy": maxy, 'jtext': u"",
-                       'romaji': u"", 'etext': u"", "roidata":roidata})
-
-    return resized_img, blurbs
+                       'romaji': u"", 'etext': u"", "roidata": roidata})
+    return blurbs
 
 
 def ann_classify(roibytes):
@@ -133,6 +143,7 @@ def ann_classify(roibytes):
 
 
     return isjapanese
+
 
 def get_characters(roibytes):
     roi = cv2.imdecode(np.frombuffer(roibytes, np.uint8), -1)

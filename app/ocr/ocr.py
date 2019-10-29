@@ -146,110 +146,26 @@ def segment_lines(image):
 def ocr_boxes(image):
     lines = segment_lines(image)
     txt = u""
+
     for line in lines:
         #TODO: resize line of characters here
-        gray = cv2.cvtColor(line, cv2.COLOR_BGR2GRAY)
+        imgThresh, sorted_ctrs = dilate_horizontally_and_threshold(line)
 
-        # binary
-        ret, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)
-
-        # dilation
-        kernel = np.ones((1, 100), np.uint8)
-        img_dilation = cv2.dilate(thresh, kernel, iterations=1)
-
-        # find contours
-        ctrs, hier = cv2.findContours(img_dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        sorted_ctrs = sorted(ctrs, key=lambda ctr: cv2.boundingRect(ctr)[1])
-
-        imgGray = cv2.cvtColor(line, cv2.COLOR_BGR2GRAY)
-        imgBlurred = cv2.GaussianBlur(imgGray, (7, 7), 0)
-        imgThresh = cv2.adaptiveThreshold(imgBlurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 7, 2)
-
-        chars = []
-        i = 0
-        sizeOfChars = len(sorted_ctrs)
-        while i < sizeOfChars:
-            # Get bounding box
-            x, y, w, h = cv2.boundingRect(sorted_ctrs[i])
-            characteris = "character"
-
-            if (h < 15) and ((i + 1) < (sizeOfChars-1)):
-                while (h < 15) and ((i + 1) < (sizeOfChars-1)):
-                    px, py, pw, ph = cv2.boundingRect(sorted_ctrs[i - 1])
-                    nx, ny, nw, nh = cv2.boundingRect(sorted_ctrs[i + 1])
-
-                    if (y - (py + ph)) > 20 and (ny - (y + h)) > 20:
-                        break
-
-                    else:
-                        i += 1
-                        h = h + nh + (ny - (h + y))
-                        imgROI = imgThresh[y:y + h, x:x + w]
-                        imgROI = crop_image_only_outside(imgROI)
-                        height, width = imgROI.shape[:2]
-
-                        if width < 7:
-                            nx, ny, nw, nh = cv2.boundingRect(sorted_ctrs[i + 1])
-                            h = h + nh + (ny - (h + y))
-                            i += 1
-                            characteris = "ellipsis"
-
-            else:
-                if (i + 1) == (sizeOfChars - 1):
-                    nx, ny, nw, nh = cv2.boundingRect(sorted_ctrs[i + 1])
-
-                    if nh < 17:
-                        i += 1
-                        h = h + nh + (ny - (h + y))
-                        characteris = "punctuation"
-
-                else:
-                    imgROI = imgThresh[y:y + h, x:x + w]
-                    imgROI = crop_image_only_outside(imgROI)
-                    height, width = imgROI.shape[:2]
-
-                    if (height < 7) and (width < 7) and (i == (sizeOfChars - 1)):
-                        characteris = "period"
-
-                    if width < 12:
-                        characteris = "dash"
-
-                    elif width < 15:
-                        characteris = "tilde"
-
-            chars.append([x, y, w, h, characteris])
-            i += 1
+        chars = group_pixels_by_char(imgThresh, sorted_ctrs)
 
         for char in chars:
             [intX, intY, intW, intH, characteris] = char
 
             try:
-                if characteris == "ellipsis":
-                    result = u"…"
+                imgROI = imgThresh[intY:intY + intH, intX:intX + intW]
+                imgROI = crop_image_only_outside(imgROI)
 
-                elif characteris == "tilde":
-                    result = u"~"
+                imgROIResized = resize_and_pad(imgROI, desired_size, desired_size)
 
-                elif characteris == "dash":
-                    result = u"ー"
+                predict = imgROIResized.reshape((1, desired_size * desired_size))
 
-                elif characteris == "period":
-                    result = u"。"
+                result = k_nearest_neighbors(dataset2, predict, k=3)
 
-                else:
-                    imgROI = imgThresh[intY:intY + intH, intX:intX + intW]
-                    imgROI = crop_image_only_outside(imgROI)
-
-                    imgROIResized = resize_and_pad(imgROI, desired_size, desired_size)
-
-                    predict = imgROIResized.reshape((1, desired_size * desired_size))
-
-                    if characteris == "punctuation":
-                        result = k_nearest_neighbors(dataset2, predict, k=3)
-
-                    else:
-                        result = k_nearest_neighbors(dataset, predict, k=11)
             except:
                 result = u""
 
@@ -260,3 +176,77 @@ def ocr_boxes(image):
             # cv2.waitKey(0)
 
     return txt
+
+
+def dilate_horizontally_and_threshold(line):
+    gray = cv2.cvtColor(line, cv2.COLOR_BGR2GRAY)
+    # binary
+    ret, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)
+    # dilation
+    kernel = np.ones((1, 100), np.uint8)
+    img_dilation = cv2.dilate(thresh, kernel, iterations=1)
+    # find contours
+    ctrs, hier = cv2.findContours(img_dilation.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    sorted_ctrs = sorted(ctrs, key=lambda ctr: cv2.boundingRect(ctr)[1])
+    imgGray = cv2.cvtColor(line, cv2.COLOR_BGR2GRAY)
+    imgBlurred = cv2.GaussianBlur(imgGray, (7, 7), 0)
+    imgThresh = cv2.adaptiveThreshold(imgBlurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 7, 2)
+    return imgThresh, sorted_ctrs
+
+
+def group_pixels_by_char(imgThresh, sorted_ctrs):
+    chars = []
+    i = 0
+    sizeOfChars = len(sorted_ctrs)
+    while i < sizeOfChars:
+        # Get bounding box
+        x, y, w, h = cv2.boundingRect(sorted_ctrs[i])
+        characteris = "character"
+
+        if (h < 15) and ((i + 1) < (sizeOfChars - 1)):
+            while (h < 15) and ((i + 1) < (sizeOfChars - 1)):
+                px, py, pw, ph = cv2.boundingRect(sorted_ctrs[i - 1])
+                nx, ny, nw, nh = cv2.boundingRect(sorted_ctrs[i + 1])
+
+                if (y - (py + ph)) > 20 and (ny - (y + h)) > 20:
+                    break
+
+                else:
+                    i += 1
+                    h = h + nh + (ny - (h + y))
+                    imgROI = imgThresh[y:y + h, x:x + w]
+                    imgROI = crop_image_only_outside(imgROI)
+                    height, width = imgROI.shape[:2]
+
+                    if width < 7:
+                        nx, ny, nw, nh = cv2.boundingRect(sorted_ctrs[i + 1])
+                        h = h + nh + (ny - (h + y))
+                        i += 1
+                        characteris = "ellipsis"
+
+        else:
+            if (i + 1) == (sizeOfChars - 1):
+                nx, ny, nw, nh = cv2.boundingRect(sorted_ctrs[i + 1])
+
+                if nh < 17:
+                    i += 1
+                    h = h + nh + (ny - (h + y))
+                    characteris = "punctuation"
+
+            else:
+                imgROI = imgThresh[y:y + h, x:x + w]
+                imgROI = crop_image_only_outside(imgROI)
+                height, width = imgROI.shape[:2]
+
+                if (height < 7) and (width < 7) and (i == (sizeOfChars - 1)):
+                    characteris = "period"
+
+                if width < 12:
+                    characteris = "dash"
+
+                elif width < 15:
+                    characteris = "tilde"
+
+        chars.append([x, y, w, h, characteris])
+        i += 1
+    return chars
