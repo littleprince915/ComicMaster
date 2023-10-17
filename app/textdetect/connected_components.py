@@ -2,6 +2,7 @@ import numpy as np
 import scipy.ndimage
 from pylab import zeros, amax
 import cv2
+import pprint
 
 
 def area_bb(a):
@@ -61,8 +62,15 @@ def average_size(img, minimum_area=3, maximum_area=100):
     return np.median(aoi)
 
 
-def form_mask(img, max_size, min_size):
+def form_mask(img, max_size, min_size, printing=False):
     components = get_connected_components(img)
     sorted_components = sorted(components, key=area_bb)
+
+    i = 0
+    for component in sorted_components:
+        i = i + 1
+        cv2.imwrite("./processes/CC/cc_{}.png".format(i), img[component])
+        print "cc_{}: ".format(i) + str(component)
+
     mask = masks(img, sorted_components, max_size, min_size)
     return mask

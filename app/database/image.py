@@ -101,12 +101,13 @@ def createimagestep3(imageid):
         if not textarea.isjapanese:
             continue
 
-        jtext, romaji = get_characters(roibytes)
+        jtext, etext, romaji = get_characters(roibytes)
 
         if not jtext:
             continue
 
         textarea.jtext = jtext
+        textarea.etext = etext
         textarea.romaji = romaji
         db.session.add(textarea)
 

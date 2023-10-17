@@ -8,11 +8,6 @@ from collections import Counter
 import pickle
 import numpy as np
 
-import textdetect.connected_components as cc
-import textdetect.clean_page as clean
-import textdetect.segmentation as seg
-
-from . import app
 from googletrans import Translator
 
 picklefile = open("dataset.pickle", "rb")
@@ -268,55 +263,55 @@ def ocr_boxes(image):
 
     return txt
 
-def detect_boxes():
-    infile = os.path.join(app.config['UPLOAD_FOLDER'], "original_manga.jpg")
-    img = cv2.imread(infile)
-    img = image_resize(img, width=1075)
-    gray = clean.grayscale(img)
-
-    segmented_image = seg.segment_image(gray)
-    segmented_image = segmented_image[:,:,2]
-
-    #text columns are in the 3rd channel
-    #columns = segmented_image[:,:,2]
-    components = cc.get_connected_components(segmented_image)
-
-    #perhaps do more strict filtering of connected components because sections of characters
-    #will not be dropped from run length smoothed areas? Yes. Results quite good.
-    #filtered = cc.filter_by_size(img,components,average_size*100,average_size*1)
-
-    (h, w) = img.shape[:2]
-    neww = 400
-    resize = float(neww) / float(w)
-    newh = int(resize * h)
-
-    resized_img = cv2.resize(img, (neww, newh))
-
-    cv2.imwrite(os.path.join(app.config['UPLOAD_FOLDER'], "manga.jpg"), resized_img)
-
-    blurbs = []
-    id = 0
-    for component in components:
-        #TODO: ocr here
-
-        minx = int(component[1].start * resize)
-        miny = int(component[0].start * resize)
-        maxx = int(component[1].stop * resize)
-        maxy = int(component[0].stop * resize)
-
-        roi = img[component[0].start:component[0].stop, component[1].start:component[1].stop]
-        cv2.imwrite(os.path.join(app.config['UPLOAD_FOLDER'], "textarea{}.jpg".format(id)), roi)
-
-        jtext = ocr_boxes(roi)
-
-        if not jtext: continue
-
-        translation = translator.translate(jtext, dest='en')
-        romaji = translator.translate(jtext, dest='ja')
-
-        blurbs.append({"id": id, "minx": minx, "miny": miny, "maxx": maxx, "maxy": maxy, 'jtext':jtext, 'romaji':romaji.pronunciation, 'etext':translation.text})
-        id += 1
-
-        print jtext.encode('utf-8')
-
-    return blurbs
+# def detect_boxes():
+#     infile = os.path.join(app.config['UPLOAD_FOLDER'], "original_manga.jpg")
+#     img = cv2.imread(infile)
+#     img = image_resize(img, width=1075)
+#     gray = clean.grayscale(img)
+#
+#     segmented_image = seg.segment_image(gray)
+#     segmented_image = segmented_image[:,:,2]
+#
+#     #text columns are in the 3rd channel
+#     #columns = segmented_image[:,:,2]
+#     components = cc.get_connected_components(segmented_image)
+#
+#     #perhaps do more strict filtering of connected components because sections of characters
+#     #will not be dropped from run length smoothed areas? Yes. Results quite good.
+#     #filtered = cc.filter_by_size(img,components,average_size*100,average_size*1)
+#
+#     (h, w) = img.shape[:2]
+#     neww = 400
+#     resize = float(neww) / float(w)
+#     newh = int(resize * h)
+#
+#     resized_img = cv2.resize(img, (neww, newh))
+#
+#     cv2.imwrite(os.path.join(app.config['UPLOAD_FOLDER'], "manga.jpg"), resized_img)
+#
+#     blurbs = []
+#     id = 0
+#     for component in components:
+#         #TODO: ocr here
+#
+#         minx = int(component[1].start * resize)
+#         miny = int(component[0].start * resize)
+#         maxx = int(component[1].stop * resize)
+#         maxy = int(component[0].stop * resize)
+#
+#         roi = img[component[0].start:component[0].stop, component[1].start:component[1].stop]
+#         cv2.imwrite(os.path.join(app.config['UPLOAD_FOLDER'], "textarea{}.jpg".format(id)), roi)
+#
+#         jtext = ocr_boxes(roi)
+#
+#         if not jtext: continue
+#
+#         translation = translator.translate(jtext, dest='en')
+#         romaji = translator.translate(jtext, dest='ja')
+#
+#         blurbs.append({"id": id, "minx": minx, "miny": miny, "maxx": maxx, "maxy": maxy, 'jtext':jtext, 'romaji':romaji.pronunciation, 'etext':translation.text})
+#         id += 1
+#
+#         print jtext.encode('utf-8')
+#
+#     return blurbs

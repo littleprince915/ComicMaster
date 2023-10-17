@@ -31,8 +31,8 @@ def L_layer_model(X, Y, num_iterations = 2000, learning_rate = 0.005, print_cost
         parameters = annf.update_parameters(parameters, grads, learning_rate)
                 
         # Print the cost every 100 training example
-        if print_cost and i % 100 == 0:
-            print ("Cost after iteration %i: %f" %(i, cost))
+        print ("Cost after iteration %i of %i: %f" %(i+1, num_iterations, cost))
+
         if print_cost and i % 100 == 0:
             costs.append(cost)
     

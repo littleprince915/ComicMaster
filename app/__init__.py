@@ -20,8 +20,9 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 db = SQLAlchemy(app)
-# db.create_all()
+#db.create_all()
 
 from app import userviews
 from app import imageviews
 from app import imagestepviews
+from app import imagedataviews

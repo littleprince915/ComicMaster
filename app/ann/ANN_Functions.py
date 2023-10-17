@@ -7,6 +7,8 @@ Created on Sun Apr  7 21:29:39 2019
 """
 import numpy as np
 
+globalnumber = 0
+
 def sigmoid(Z):
     A = 1/(1+np.exp(-Z)) 
     cache = Z
@@ -185,11 +187,13 @@ def predict(X, y, parameters):
     return p
 
 def predict_one(X, parameters):
+    global globalnumber
     m = X.shape[1]
     n = len(parameters) // 2 # number of layers in the neural network
 
     probas, caches = L_model_forward(X, parameters)
-
+    # print "textarea_{} {}".format(globalnumber, probas[0,0])
+    globalnumber += 1
     # convert probas to 0/1 predictions
     result = True if probas[0,0] > 0.5 else False
 

@@ -52,6 +52,10 @@ def RLSO(img, h_threshold, v_threshold):
 
     if False:
         cv2.imshow("horizontal rls", horizontal)
+        cv2.imwrite("./processes/horizontalrls.png", horizontal)
         cv2.imshow("vertical rls", vertical)
+        cv2.imwrite("./processes/verticalrls.png", vertical)
         cv2.imshow("vertical + horizontal rls", run_length_smoothed_or)
+        cv2.imwrite("./processes/combinedrls.png", run_length_smoothed_or)
+
     return run_length_smoothed_or

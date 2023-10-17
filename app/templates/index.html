@@ -50,6 +50,7 @@
                 display:flex;
                 justify-content:center;
                 align-items:center;
+                opacity:50%;
             }
 		</style>
   </head>
@@ -63,6 +64,7 @@
         <li><a href="/gallery"><strong>Gallery</strong></a></li>
         <li><a href="/image"><strong>Translate</strong></a></li>
         <li><a href="/imagestep"><strong>Step by Step</strong></a></li>
+        <li><a href="/imagedata"><strong>Add ANN Dataset</strong></a></li>
       </ul>
     </div>
     <header id="header">
@@ -106,7 +108,8 @@
           
           {% if withimage %}
           {% for box in boxes %}
-          <div class="mui-col-md-8 texts" style="padding:0px" data-id="{{box.id}}" title="<img src='/textarea/{{box.id}}' />">
+{#          <div class="mui-col-md-8 texts" style="padding:0px" data-id="{{box.id}}" title="<img src='/textarea/{{box.id}}' />">#}
+          <div class="mui-col-md-8 texts" style="padding:0px" data-id="{{box.id}}">
             <div class="mui-col-md-4">
               <div class="mui-panel">
                 {{ box.jtext }}
@@ -149,7 +152,7 @@
                     let id = $(this).data("id");
 
                     $("div.bubble[data-id='" + id + "']").css("background-color", "lightblue");
-                    $("div.texts[data-id='" + id + "']").tooltip({content: "<img src='/textarea/" + id + "' />"})
+                    /*$("div.texts[data-id='" + id + "']").tooltip({content: "<img src='/textarea/" + id + "' />"})*/
                 }, function(){
                     let id = $(this).data("id");
 
